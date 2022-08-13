@@ -1,26 +1,46 @@
 package com.sitiapp.pruebatecnicasitiapp.controller;
 
+
 import com.sitiapp.pruebatecnicasitiapp.dto.ChangePsw;
+import com.sitiapp.pruebatecnicasitiapp.dto.JwtDto;
+import com.sitiapp.pruebatecnicasitiapp.dto.LoginRequest;
 import com.sitiapp.pruebatecnicasitiapp.entity.User;
+import com.sitiapp.pruebatecnicasitiapp.security.jwt.JwtProvider;
 import com.sitiapp.pruebatecnicasitiapp.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @CrossOrigin
+@Log4j2
 @RequestMapping("api/v1/user")
+
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtProvider jwtProvider;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<User> create(@RequestBody User user) {
@@ -52,7 +72,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-/*    @PutMapping("update-psw/{id}")
+    @PutMapping("update-psw/{id}")
     public ResponseEntity<?> Update(@PathVariable Integer id, @RequestBody ChangePsw password) {
         User user = userService.findById(id);
 
@@ -64,5 +84,20 @@ public class UserController {
             return ResponseEntity.ok(this.userService.save(user));
         }
         return ResponseEntity.badRequest().build();
-    }*/
+    }
+
+
+    @PostMapping("login")
+    public ResponseEntity<JwtDto> login(@RequestBody @Valid LoginRequest loginRequest) {
+        log.info(loginRequest.toString());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtProvider.generateToken(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+
+        return ResponseEntity.ok(jwtDto);
+
+    }
 }
