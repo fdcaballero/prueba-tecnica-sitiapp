@@ -1,15 +1,17 @@
 package com.sitiapp.pruebatecnicasitiapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "clientes")
 @Data
-public class Customer {
+public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +30,7 @@ public class Customer {
     private String state;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnore
     private List<Invoice> invoices;
 
     @ManyToOne(cascade = CascadeType.ALL)

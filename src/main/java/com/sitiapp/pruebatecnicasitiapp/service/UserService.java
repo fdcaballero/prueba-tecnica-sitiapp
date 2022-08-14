@@ -18,5 +18,6 @@ public interface UserService {
 
     User findByUserName(String username);
 
+    boolean exitsUserbyUsername(String username);
 
 }

@@ -44,11 +44,13 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
+    @PostMapping("signin")
+    public ResponseEntity<?> create(@RequestBody User user) {
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.save(user));
+        if (!this.userService.exitsUserbyUsername(user.getUserName())) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.save(user));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new String("usuario ya esta registrado"));
     }
 
     @GetMapping("username/{username}")

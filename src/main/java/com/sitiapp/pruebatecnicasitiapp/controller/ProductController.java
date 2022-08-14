@@ -19,7 +19,7 @@ public class ProductController {
     private ProductService productService;
 
 
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
+//    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping
     public List<Product> getAll() {
         return this.productService.findAll();
