@@ -4,6 +4,7 @@ package com.sitiapp.pruebatecnicasitiapp.controller;
 import com.sitiapp.pruebatecnicasitiapp.dto.ChangePsw;
 import com.sitiapp.pruebatecnicasitiapp.dto.JwtDto;
 import com.sitiapp.pruebatecnicasitiapp.dto.LoginRequest;
+import com.sitiapp.pruebatecnicasitiapp.dto.UserDetailsImpl;
 import com.sitiapp.pruebatecnicasitiapp.entity.User;
 import com.sitiapp.pruebatecnicasitiapp.security.jwt.JwtProvider;
 import com.sitiapp.pruebatecnicasitiapp.service.UserService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -89,15 +91,22 @@ public class UserController {
 
     @PostMapping("login")
     public ResponseEntity<JwtDto> login(@RequestBody @Valid LoginRequest loginRequest) {
-        log.info(loginRequest.toString());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtProvider.generateToken(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
+        UserDetails userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String perfil = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority()).collect(Collectors.toList()).get(0);
+        JwtDto jwtDto = new JwtDto(jwt, (UserDetailsImpl) userDetails, perfil);
 
         return ResponseEntity.ok(jwtDto);
 
+    }
+
+    @DeleteMapping("{id}")
+    public boolean deleteUser(@PathVariable Integer id) {
+        return this.userService.delete(id);
     }
 }

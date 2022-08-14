@@ -29,11 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Error Usuario no existe");
         }
-        /*List<GrantedAuthority> authorities = Arrays.asList(user.getPerfil())
-                .stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
-
-        return new org.springframework.security.core.userdetails.User(user.getUserName(),
-                user.getPassword(), true, true, true, true, authorities);*/
+     
         return UserDetailsImpl.build(user);
 
     }

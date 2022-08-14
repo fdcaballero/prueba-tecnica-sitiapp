@@ -5,6 +5,7 @@ import com.sitiapp.pruebatecnicasitiapp.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class ProductController {
     private ProductService productService;
 
 
+    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
     @GetMapping
     public List<Product> getAll() {
         return this.productService.findAll();

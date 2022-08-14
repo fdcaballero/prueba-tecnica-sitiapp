@@ -9,22 +9,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class UserDetailsImpl implements UserDetails {
 
+
+    private Integer id;
+
+    private String lastName;
     private String name;
     private String password;
     private String userName;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String name, String userName, String password,
+    public UserDetailsImpl(Integer id, String name, String userName, String lastName, String password,
                            Collection<? extends GrantedAuthority> authorities) {
         this.name = name;
         this.userName = userName;
-
+        this.id = id;
         this.password = password;
         this.authorities = authorities;
+        this.lastName = lastName;
     }
 
     @Override
@@ -34,9 +40,14 @@ public class UserDetailsImpl implements UserDetails {
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getPerfil().getName()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+user.getPerfil().getName()));
 
-        return new UserDetailsImpl(user.getName(), user.getUserName(), user.getPassword(), authorities);
+        return new UserDetailsImpl(user.getId(), user.getName(), user.getUserName(), user.getLastName(), user.getPassword(), authorities);
+    }
+
+
+    public String getName() {
+        return name;
     }
 
     @Override
