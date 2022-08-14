@@ -31,5 +31,8 @@ public class Product implements Serializable {
 
     @Column(name = "codigo")
     private String code;
+
+    @Column(name = "imagen")
+    private String image;
 }
 
