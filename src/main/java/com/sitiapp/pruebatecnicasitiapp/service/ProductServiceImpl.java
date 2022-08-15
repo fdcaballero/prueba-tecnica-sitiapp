@@ -1,6 +1,7 @@
 package com.sitiapp.pruebatecnicasitiapp.service;
 
 import com.sitiapp.pruebatecnicasitiapp.entity.Product;
+import com.sitiapp.pruebatecnicasitiapp.entity.StateType;
 import com.sitiapp.pruebatecnicasitiapp.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findAll() {
         return this.productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> findAllByState(StateType state) {
+        return this.productRepository.findProductsByState(state);
     }
 
     @Override

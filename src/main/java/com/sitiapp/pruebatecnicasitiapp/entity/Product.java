@@ -20,8 +20,9 @@ public class Product implements Serializable {
     @Column(name = "nombre", length = 100)
     private String name;
 
-    @Column(name = "estado", length = 45)
-    private String state;
+    @Column(name = "estado")
+    @Enumerated(EnumType.STRING)
+    private StateType state;
 
     @Column(name = "valor_unitario")
     private Integer value;

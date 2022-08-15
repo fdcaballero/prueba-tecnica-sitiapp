@@ -2,6 +2,7 @@ package com.sitiapp.pruebatecnicasitiapp.controller;
 
 import antlr.Utils;
 import com.sitiapp.pruebatecnicasitiapp.entity.Product;
+import com.sitiapp.pruebatecnicasitiapp.entity.StateType;
 import com.sitiapp.pruebatecnicasitiapp.service.ImageService;
 import com.sitiapp.pruebatecnicasitiapp.service.ImageServiceImpl;
 import com.sitiapp.pruebatecnicasitiapp.service.ProductService;
@@ -52,6 +53,11 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("state/{state}")
+    public List<Product> findAllByState(@PathVariable StateType state) {
+        return this.productService.findAllByState(state);
     }
 
     @GetMapping("{id}")
