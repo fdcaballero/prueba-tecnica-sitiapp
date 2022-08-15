@@ -33,7 +33,7 @@ public class Customer implements Serializable {
     @JsonIgnore
     private List<Invoice> invoices;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
 //    @Column(name = "tipo_identificacion")
     private IdentificationType identificationType;
 }
