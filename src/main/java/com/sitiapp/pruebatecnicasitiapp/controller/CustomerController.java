@@ -39,7 +39,7 @@ public class CustomerController {
     }
 
     @GetMapping("{identification}/abbreviature/{abbr}")
-    public ResponseEntity<Customer> findCustomerByIdentification(@PathVariable String identification, String abbr) {
+    public ResponseEntity<Customer> findCustomerByIdentification(@PathVariable String identification, @PathVariable String abbr) {
         Customer customer = this.customerService.findByIdentificationAndIdentificationType(identification, abbr);
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
