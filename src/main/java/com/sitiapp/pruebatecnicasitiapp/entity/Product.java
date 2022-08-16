@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+
 
 @Table(name = "productos")
 @Entity
@@ -33,7 +33,12 @@ public class Product implements Serializable {
     @Column(name = "codigo")
     private String code;
 
-    @Column(name = "imagen")
+    @Transient
     private String image;
+
+    @Lob
+    @Column(name = "base64")
+    private String base64;
+
 }
 

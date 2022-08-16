@@ -1,6 +1,9 @@
 package com.sitiapp.pruebatecnicasitiapp.controller;
 
 import antlr.Utils;
+import com.sitiapp.pruebatecnicasitiapp.common.BASE64DecodedMultipartFile;
+import com.sitiapp.pruebatecnicasitiapp.dto.ImageDto;
+import com.sitiapp.pruebatecnicasitiapp.dto.ProductRequestDto;
 import com.sitiapp.pruebatecnicasitiapp.entity.Product;
 import com.sitiapp.pruebatecnicasitiapp.entity.StateType;
 import com.sitiapp.pruebatecnicasitiapp.service.ImageService;
@@ -8,6 +11,7 @@ import com.sitiapp.pruebatecnicasitiapp.service.ImageServiceImpl;
 import com.sitiapp.pruebatecnicasitiapp.service.ProductService;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -19,7 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
+import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 
@@ -42,8 +46,30 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product product) {
-        return ResponseEntity.ok(this.productService.save(product));
+    public ResponseEntity<Product> create(@RequestBody ProductRequestDto request) {
+        try {
+            Product product = request.getProduct();
+            ImageDto image = request.getImage();
+            product.setImage(image.getName());
+
+            if (image.getBase64() != null) {
+                Base64 base64 = new Base64();
+                byte[] byteImage = base64.decode(image.getBase64());
+                BASE64DecodedMultipartFile stream = new BASE64DecodedMultipartFile(byteImage, image.getName(), image.getType());
+                this.imageService.save(stream);
+            }
+            Product response = this.productService.save(product);
+            Resource resource = this.imageService.load(response.getImage());
+            if(resource!= null){
+//                resource.getInputStream().
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
     @GetMapping("code/{code}")
@@ -70,25 +96,38 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Product> update(@PathVariable Integer id, @RequestBody Product product) {
+    public ResponseEntity<Product> update(@PathVariable Integer id, @RequestBody ProductRequestDto request) {
+        try {
+            ImageDto image = request.getImage();
+            Product product = request.getProduct();
+            Product product1 = this.productService.findById(id);
+            if (product1 == null) {
+                return ResponseEntity.notFound().build();
+            }
+            if (image.getBase64() != null) {
+                Base64 base64 = new Base64();
+                byte[] byteImage = base64.decode(image.getBase64());
+                BASE64DecodedMultipartFile stream = new BASE64DecodedMultipartFile(byteImage, image.getName(), image.getType());
+                this.imageService.save(stream);
+            }
 
-        Product product1 = this.productService.findById(id);
-        if (product1 == null) {
-            return ResponseEntity.notFound().build();
+            product1.setCode(product.getCode());
+            product1.setName(product.getName());
+            product1.setState(product.getState());
+            product1.setValue(product.getValue());
+            return ResponseEntity.ok(this.productService.update(product1));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-        product1.setCode(product.getCode());
-        product1.setName(product.getName());
-        product1.setState(product.getState());
-        product1.setValue(product.getValue());
-        return ResponseEntity.ok(this.productService.update(product1));
 
     }
 
     @PostMapping("/image")
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image) {
         try {
-            return imageService.save(image) ? ResponseEntity.ok("image Save") :
-                    ResponseEntity.badRequest().body("Error al aguardar image");
+            log.info("carga img " + image.getName() + " " + image.getContentType() + " " + image.getOriginalFilename());
+            return imageService.save(image) ? ResponseEntity.ok("image Save") : ResponseEntity.badRequest().body("Error al aguardar image");
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -96,8 +135,7 @@ public class ProductController {
 
     }
 
-    Function<String, MediaType> getMimeType = s -> s.equals("jpeg") ?
-            MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
+    Function<String, MediaType> getMimeType = s -> s.equals("jpeg") ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
 
 
     @GetMapping("/image/{filename}")

@@ -90,6 +90,17 @@ public class UserController {
         return ResponseEntity.badRequest().build();
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity<User> update(@PathVariable Integer id, @RequestBody User user) {
+        User userdb = this.userService.findById(id);
+        if (userdb == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        userdb.setName(user.getName());
+        userdb.setLastName(user.getLastName());
+        userdb.getPerfil().setName(user.getPerfil().getName());
+        return ResponseEntity.ok(this.userService.save(userdb));
+    }
 
     @PostMapping("login")
     public ResponseEntity<JwtDto> login(@RequestBody @Valid LoginRequest loginRequest) {
