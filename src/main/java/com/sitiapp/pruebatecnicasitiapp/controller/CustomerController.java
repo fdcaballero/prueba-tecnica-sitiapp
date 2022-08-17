@@ -67,9 +67,10 @@ public class CustomerController {
         IdentificationType identification = this.identificationTypeService.findById(customer.getIdentificationType().getId());
         if (customerBd != null) {
             if (identification != null) {
+
                 customer.setId(customerBd.getId());
                 customer.setIdentificationType(identification);
-                return ResponseEntity.ok(customer);
+                return ResponseEntity.ok(this.customerService.save(customer));
             }
         }
         return ResponseEntity.badRequest().build();

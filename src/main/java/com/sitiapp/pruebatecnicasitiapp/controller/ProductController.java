@@ -51,18 +51,7 @@ public class ProductController {
             Product product = request.getProduct();
             ImageDto image = request.getImage();
             product.setImage(image.getName());
-
-            if (image.getBase64() != null) {
-                Base64 base64 = new Base64();
-                byte[] byteImage = base64.decode(image.getBase64());
-                BASE64DecodedMultipartFile stream = new BASE64DecodedMultipartFile(byteImage, image.getName(), image.getType());
-                this.imageService.save(stream);
-            }
             Product response = this.productService.save(product);
-            Resource resource = this.imageService.load(response.getImage());
-            if(resource!= null){
-//                resource.getInputStream().
-            }
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -104,17 +93,12 @@ public class ProductController {
             if (product1 == null) {
                 return ResponseEntity.notFound().build();
             }
-            if (image.getBase64() != null) {
-                Base64 base64 = new Base64();
-                byte[] byteImage = base64.decode(image.getBase64());
-                BASE64DecodedMultipartFile stream = new BASE64DecodedMultipartFile(byteImage, image.getName(), image.getType());
-                this.imageService.save(stream);
-            }
 
             product1.setCode(product.getCode());
             product1.setName(product.getName());
             product1.setState(product.getState());
             product1.setValue(product.getValue());
+            log.info(product1.getBase64());
             return ResponseEntity.ok(this.productService.update(product1));
         } catch (Exception e) {
             log.error(e.getMessage());

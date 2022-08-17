@@ -2,6 +2,7 @@ package com.sitiapp.pruebatecnicasitiapp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "perfil")
+@NoArgsConstructor
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class Profile  implements Serializable {
 
@@ -19,5 +21,7 @@ public class Profile  implements Serializable {
     @Column(name = "nombre", length = 13)
     private String name;
 
-
+    public Profile(String name) {
+        this.name = name;
+    }
 }
