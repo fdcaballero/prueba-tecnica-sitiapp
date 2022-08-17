@@ -38,6 +38,7 @@ public class Product implements Serializable {
 
     @Lob
     @Column(name = "base64")
+    @Basic(fetch = FetchType.LAZY)
     private String base64;
 
 }

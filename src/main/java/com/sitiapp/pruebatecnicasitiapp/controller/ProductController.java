@@ -85,17 +85,17 @@ public class ProductController {
     public ResponseEntity<Product> update(@PathVariable Integer id, @RequestBody ProductRequestDto request) {
         try {
             ImageDto image = request.getImage();
+
             Product product = request.getProduct();
             Product product1 = this.productService.findById(id);
             if (product1 == null) {
                 return ResponseEntity.notFound().build();
             }
-
             product1.setCode(product.getCode());
             product1.setName(product.getName());
             product1.setState(product.getState());
             product1.setValue(product.getValue());
-            log.info(product1.getBase64());
+            product1.setBase64(image.getBase64());
             return ResponseEntity.ok(this.productService.update(product1));
         } catch (Exception e) {
             log.error(e.getMessage());
