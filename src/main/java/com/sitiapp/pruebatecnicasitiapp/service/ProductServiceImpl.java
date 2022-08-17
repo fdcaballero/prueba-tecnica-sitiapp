@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findByCode(String code) {
+    public List<Product> findByCode(String code) {
         return this.productRepository.findProductByCode(code);
     }
 

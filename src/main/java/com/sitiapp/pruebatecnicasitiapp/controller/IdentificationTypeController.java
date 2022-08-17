@@ -36,4 +36,16 @@ public class IdentificationTypeController {
         IdentificationType identification = this.identificationTypeService.findById(id);
         return (identification != null) ? ResponseEntity.ok(identification) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<IdentificationType> update(@PathVariable Integer id, @RequestBody IdentificationType identificationType) {
+        IdentificationType identificationType1 = this.identificationTypeService.findById(id);
+        if (identificationType1 == null) {
+            return ResponseEntity.notFound().build();
+        }
+        identificationType1.setAbbreviation(identificationType.getAbbreviation());
+        identificationType1.setDescription(identificationType.getDescription());
+        return ResponseEntity.ok(this.identificationTypeService.save(identificationType1));
+
+    }
 }

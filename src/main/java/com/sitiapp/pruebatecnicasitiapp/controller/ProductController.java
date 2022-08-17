@@ -62,12 +62,9 @@ public class ProductController {
     }
 
     @GetMapping("code/{code}")
-    private ResponseEntity<Product> findByCode(@PathVariable String code) {
-        Product product = this.productService.findByCode(code);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(product);
+    private List<Product> findByCode(@PathVariable String code) {
+        return this.productService.findByCode(code);
+
     }
 
     @GetMapping("state/{state}")

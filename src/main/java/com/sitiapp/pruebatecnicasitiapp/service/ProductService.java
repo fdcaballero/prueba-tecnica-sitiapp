@@ -9,7 +9,7 @@ public interface ProductService {
 
     Product findById(Integer id);
 
-    Product findByCode(String code);
+    List<Product> findByCode(String code);
 
     Product save(Product product);
 

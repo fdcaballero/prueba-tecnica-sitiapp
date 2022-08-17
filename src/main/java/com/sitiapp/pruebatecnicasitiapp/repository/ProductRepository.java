@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    Product findProductByCode(String code);
+    List<Product> findProductByCode(String code);
 
     List<Product> findProductsByState(StateType state);
 }
