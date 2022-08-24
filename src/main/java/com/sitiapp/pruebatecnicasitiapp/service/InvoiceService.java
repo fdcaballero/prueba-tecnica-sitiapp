@@ -1,5 +1,6 @@
 package com.sitiapp.pruebatecnicasitiapp.service;
 
+import com.sitiapp.pruebatecnicasitiapp.dto.ReportProduct;
 import com.sitiapp.pruebatecnicasitiapp.entity.Invoice;
 
 import java.util.List;
@@ -15,5 +16,7 @@ public interface InvoiceService {
     List<Invoice> findAll();
 
     boolean delete(Integer id);
+
+    List<ReportProduct> getAllProductMostSelling();
 
 }

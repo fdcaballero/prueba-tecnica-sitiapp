@@ -1,5 +1,6 @@
 package com.sitiapp.pruebatecnicasitiapp.controller;
 
+import com.sitiapp.pruebatecnicasitiapp.dto.ReportProduct;
 import com.sitiapp.pruebatecnicasitiapp.entity.Invoice;
 import com.sitiapp.pruebatecnicasitiapp.entity.InvoiceDetails;
 import com.sitiapp.pruebatecnicasitiapp.service.InvoiceDetailsService;
@@ -68,4 +69,8 @@ public class InvoiceController {
         return ResponseEntity.ok(invoice);
     }
 
+    @GetMapping("/report")
+    public List<ReportProduct> getProductMostSelling(){
+        return this.invoiceService.getAllProductMostSelling();
+    }
 }
