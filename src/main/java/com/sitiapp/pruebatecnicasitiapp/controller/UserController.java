@@ -67,6 +67,11 @@ public class UserController {
         return this.userService.findAll();
     }
 
+    @GetMapping("exist/{username}")
+    public ResponseEntity<Boolean> exits(@PathVariable String username) {
+        return ResponseEntity.ok(this.userService.exitsUserbyUsername(username));
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<User> getById(@PathVariable Integer id) {
         User user = this.userService.findById(id);
